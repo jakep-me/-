@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개인 맞춤형 영어&수학 학습 웹사이트</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-6">
+        <!-- 헤더 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-indigo-800 mb-2">
+                <i class="fas fa-graduation-cap mr-3"></i>
+                개인 맞춤형 영어&수학 학습
+            </h1>
+            <p class="text-gray-600">나만의 단어장을 만들고 수학 개념을 자유롭게 질문하세요!</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 영어 단어 학습 섹션 -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4 flex items-center">
+                    <i class="fas fa-book mr-2"></i>영어 단어 학습
+                </h2>
+
+                <!-- 단어 추가 폼 -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-3">새 단어 추가</h3>
+                    <div class="space-y-3">
+                        <input type="text" id="newWord" placeholder="영어 단어" class="w-full p-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="newMeaning" placeholder="한국어 뜻" class="w-full p-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="newExample" placeholder="예문 (선택사항)" class="w-full p-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select id="wordLevel" class="w-full p-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="초급">초급</option>
+                            <option value="중급">중급</option>
+                            <option value="고급">고급</option>
+                        </select>
+                        <button onclick="addNewWord()" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>단어 추가하기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 단어 목록 -->
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">나의 단어장</h3>
+                        <select id="levelFilter" onchange="filterWords()" class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+                            <option value="전체">전체</option>
+                            <option value="초급">초급</option>
+                            <option value="중급">중급</option>
+                            <option value="고급">고급</option>
+                        </select>
+                    </div>
+                    <div id="wordList" class="space-y-2 max-h-64 overflow-y-auto">
+                        <!-- 단어들이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+
+                <!-- 학습 모드 -->
+                <div class="space-y-3">
+                    <button onclick="startFlashcardMode()" class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition-colors">
+                        <i class="fas fa-id-card mr-2"></i>플래시카드 학습 시작
+                    </button>
+                    <button onclick="startQuizMode()" class="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition-colors">
+                        <i class="fas fa-question-circle mr-2"></i>단어 퀴즈 시작
+                    </button>
+                </div>
+
+                <!-- 플래시카드 모드 -->
+                <div id="flashcardMode" class="hidden mt-4 p-4 bg-green-50 rounded-lg">
+                    <div class="text-center">
+                        <div id="flashcard" class="bg-white p-6 rounded-lg shadow-md cursor-pointer min-h-[120px] flex items-center justify-center" onclick="flipCard()">
+                            <div id="cardFront" class="text-2xl font-bold text-gray-800"></div>
+                            <div id="cardBack" class="hidden text-lg text-gray-600"></div>
+                        </div>
+                        <div class="mt-4 space-x-2">
+                            <button onclick="prevCard()" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">이전</button>
+                            <button onclick="nextCard()" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">다음</button>
+                            <button onclick="exitFlashcard()" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">종료</button>
+                        </div>
+                        <div id="cardProgress" class="mt-2 text-sm text-gray-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 수학 개념 학습 섹션 -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-green-700 mb-4 flex items-center">
+                    <i class="fas fa-calculator mr-2"></i>수학 개념 학습
+                </h2>
+
+                <!-- 수학 질문 섹션 -->
+                <div class="mb-6 p-4 bg-green-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-green-800 mb-3">AI 수학 선생님께 질문하기</h3>
+                    <div class="space-y-3">
+                        <textarea id="mathQuestion" placeholder="수학 개념이나 문제에 대해 질문해보세요!" rows="3" class="w-full p-3 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
+                        <button id="askMathBtn" onclick="askMathQuestion()" class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition-colors flex items-center justify-center">
+                            <i id="askMathIcon" class="fas fa-paper-plane mr-2"></i>
+                            <span id="askMathText">질문하기</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Q&A 히스토리 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">질문&답변 히스토리</h3>
+                    <div id="qaHistory" class="space-y-3 max-h-64 overflow-y-auto">
+                        <!-- Q&A가 여기에 표시됩니다 -->
+                    </div>
+                </div>
+
+                <!-- 기본 수학 개념들 -->
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">기본 수학 개념</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="showMathConcept('algebra')" class="p-2 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 text-sm">대수</button>
+                        <button onclick="showMathConcept('geometry')" class="p-2 bg-purple-100 text-purple-800 rounded-md hover:bg-purple-200 text-sm">기하</button>
+                        <button onclick="showMathConcept('calculus')" class="p-2 bg-red-100 text-red-800 rounded-md hover:bg-red-200 text-sm">미적분</button>
+                        <button onclick="showMathConcept('statistics')" class="p-2 bg-yellow-100 text-yellow-800 rounded-md hover:bg-yellow-200 text-sm">통계</button>
+                    </div>
+                </div>
+
+                <!-- 간단한 계산기 -->
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">간단한 계산기</h3>
+                    <div class="space-y-2">
+                        <input type="text" id="calculator" placeholder="계산식을 입력하세요 (예: 2+3*4)" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <button onclick="calculate()" class="w-full bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-equals mr-2"></i>계산하기
+                        </button>
+                        <div id="calcResult" class="text-center text-lg font-semibold text-gray-800"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10가지 새로운 학습 보조 도구 섹션 -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-orange-700 mb-4 flex items-center">
+                <i class="fas fa-rocket mr-2"></i>AI 학습 보조 도구
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="p-4 bg-orange-50 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-orange-800 mb-2 flex items-center"><i class="fas fa-feather-alt mr-2"></i>맞춤형 스토리 작가</h3>
+                    <p class="text-sm text-gray-600 mb-2">단어장 속 단어들을 사용해 짧은 스토리를 만듭니다.</p>
+                    <button onclick="generateStory()" class="w-full bg-orange-600 text-white py-1 rounded-md hover:bg-orange-700 text-sm">스토리 생성</button>
+                    <div id="storyResult" class="mt-2 text-sm text-gray-700 max-h-24 overflow-y-auto p-2 bg-white rounded" style="white-space: pre-wrap;"></div>
+                </div>
+
+                <div class="p-4 bg-red-50 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-red-800 mb-2 flex items-center"><i class="fas fa-spell-check mr-2"></i>문법 오류 교정기</h3>
+                    <p class="text-sm text-gray-600 mb-2">작성한 문장의 문법 오류를 찾아 교정해줍니다.</p>
+                    <textarea id="grammarText" placeholder="교정할 영어 문장을 입력하세요" rows="2" class="w-full p-2 mb-2 border rounded-md text-sm resize-none"></textarea>
+                    <button onclick="correctGrammar()" class="w-full bg-red-600 text-white py-1 rounded-md hover:bg-red-700 text-sm">교정하기</button>
+                    <div id="grammarResult" class="mt-2 text-sm text-gray-700 max-h-24 overflow-y-auto p-2 bg-white rounded" style="white-space: pre-wrap;"></div>
+                </div>
+
+                <div class="p-4 bg-teal-50 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-teal-800 mb-2 flex items-center"><i class="fas fa-compress-alt mr-2"></i>개념 요약기</h3>
+                    <p class="text-sm text-gray-600 mb-2">긴 텍스트를 핵심 내용만 간결하게 요약해줍니다.</p>
+                    <textarea id="summaryText" placeholder="요약할 텍스트 입력" rows="2" class="w-full p-2 mb-2 border rounded-md text-sm resize-none"></textarea>
+                    <button onclick="summarizeText()" class="w-full bg-teal-600 text-white py-1 rounded-md hover:bg-teal-700 text-sm">요약하기</button>
+                    <div id="summaryResult" class="mt-2 text-sm text-gray-700 max-h-24 overflow-y-auto p-2 bg-white rounded" style="white-space: pre-wrap;"></div>
+                </div>
+
+                <div class="p-4 bg-yellow-50 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-yellow-800 mb-2 flex items-center"><i class="fas fa-dice mr-2"></i>AI 문제 생성기</h3>
+                    <p class="text-sm text-gray-600 mb-2">특정 개념에 대한 다양한 난이도의 문제를 생성합니다.</p>
+                    <input type="text" id="quizTopic" placeholder="개념 (예: 이차방정식)" class="w-full p-2 mb-2 border rounded-md text-sm">
+                    <select id="quizDifficulty" class="w-full p-2 mb-2 border rounded-md text-sm">
+                        <option value="초급">초급</option>
+                        <option value="중급">중급</option>
+                        <option value="고급">고급</option>
+                    </select>
+                    <button onclick="generateQuizProblem()" class="w-full bg-yellow-600 text-white py-1 rounded-md hover:bg-yellow-700 text-sm">문제 생성</button>
+                    <div id="quizProblemResult" class="mt-2 text-sm text-gray-700 max-h-24 overflow-y-auto p-2 bg-white rounded" style="white-space: pre-wrap;"></div>
+                </div>
+
+                <div class="p-4 bg-indigo-50 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-indigo-800 mb-2 flex items-center"><i class="fas fa-scroll mr-2"></i>수학 공식 증명</h3>
+                    <p class="text-sm text-gray-600 mb-2">요청한 수학 공식의 증명 과정을 단계별로 보여줍니다.</p>
+                    <input type="text" id="proofFormula" placeholder="공식 (예: 피타고라스 정리)" class="w-full p-2 mb-2 border rounded-md text-sm">
+                    <button onclick="showProof()" class="w-full bg-indigo-600 text-white py-1 rounded-md hover:bg-indigo-700 text-sm">증명 보기</button>
+                    <div id="proofResult" class="mt-2 text-sm text-gray-700 max-h-24 overflow-y-auto p-2 bg-white rounded" style="white-space: pre-wrap;"></div>
+                </div>
+
+                <div class="p-4 bg-fuchsia-50 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-fuchsia-800 mb-2 flex items-center"><i class="fas fa-lightbulb mr-2"></i>개념 비유 설명</h3>
+                    <p class="text-sm text-gray-600 mb-2">복잡한 개념을 일상생활의 비유를 들어 설명해줍니다.</p>
+                    <input type="text" id="analogyConcept" placeholder="설명할 개념 입력" class="w-full p-2 mb-2 border rounded-md text-sm">
+                    <button onclick="explainWithAnalogy()" class="w-full bg-fuchsia-600 text-white py-1 rounded-md hover:bg-fuchsia-700 text-sm">비유 설명</button>
+                    <div id="analogyResult" class="mt-2 text-sm text-gray-700 max-h-24 overflow-y-auto p-2 bg-white rounded" style="white-space: pre-wrap;"></div>
+                </div>
+
+                <div class="p-4 bg-cyan-50 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-cyan-800 mb-2 flex items-center"><i class="fas fa-comments mr-2"></i>영어 회화 파트너</h3>
+                    <p class="text-sm text-gray-600 mb-2">주어진 주제로 영어 대화를 연습합니다.</p>
+                    <input type="text" id="dialogTopic" placeholder="대화 주제 (예: 여행)" class="w-full p-2 mb-2 border rounded-md text-sm">
+                    <button onclick="startEnglishDialog()" class="w-full bg-cyan-600 text-white py-1 rounded-md hover:bg-cyan-700 text-sm">대화 시작</button>
+                    <div id="dialogResult" class="mt-2 text-sm text-gray-700 max-h-24 overflow-y-auto p-2 bg-white rounded" style="white-space: pre-wrap;"></div>
+                </div>
+
+                <div class="p-4 bg-pink-50 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-pink-800 mb-2 flex items-center"><i class="fas fa-times-circle mr-2"></i>수학 오답노트 도우미</h3>
+                    <p class="text-sm text-gray-600 mb-2">틀린 문제에 대한 해설이나 유사 문제를 제공합니다.</p>
+                    <textarea id="wrongProblem" placeholder="틀린 문제와 풀이 입력" rows="2" class="w-full p-2 mb-2 border rounded-md text-sm resize-none"></textarea>
+                    <button onclick="getWrongProblemHelp()" class="w-full bg-pink-600 text-white py-1 rounded-md hover:bg-pink-700 text-sm">도움 받기</button>
+                    <div id="wrongProblemResult" class="mt-2 text-sm text-gray-700 max-h-24 overflow-y-auto p-2 bg-white rounded" style="white-space: pre-wrap;"></div>
+                </div>
+
+                <div class="p-4 bg-lime-50 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-lime-800 mb-2 flex items-center"><i class="fas fa-gamepad mr-2"></i>단어 암기 게임 제안</h3>
+                    <p class="text-sm text-gray-600 mb-2">단어장을 활용한 재미있는 암기 게임을 제안합니다.</p>
+                    <button onclick="suggestWordGame()" class="w-full bg-lime-600 text-white py-1 rounded-md hover:bg-lime-700 text-sm">게임 제안 받기</button>
+                    <div id="wordGameSuggestion" class="mt-2 text-sm text-gray-700 max-h-24 overflow-y-auto p-2 bg-white rounded" style="white-space: pre-wrap;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 학습 통계 -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-indigo-700 mb-4 flex items-center">
+                <i class="fas fa-chart-bar mr-2"></i>학습 통계
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <div class="text-2xl font-bold text-blue-700" id="totalWords">0</div>
+                    <div class="text-sm text-gray-600">총 단어 수</div>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <div class="text-2xl font-bold text-green-700" id="learnedWords">0</div>
+                    <div class="text-sm text-gray-600">학습한 단어</div>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded-lg">
+                    <div class="text-2xl font-bold text-purple-700" id="totalQuestions">0</div>
+                    <div class="text-sm text-gray-600">수학 질문 수</div>
+                </div>
+                <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                    <div class="text-2xl font-bold text-yellow-700" id="studyDays">1</div>
+                    <div class="text-sm text-gray-600">학습 일수</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // 전역 변수
+        let userWords = JSON.parse(localStorage.getItem('userWords')) || [];
+        let mathQAs = JSON.parse(localStorage.getItem('mathQAs')) || [];
+        let currentCardIndex = 0;
+        let isCardFlipped = false;
+
+        // 기본 단어들
+        const defaultWords = [
+            {word: "apple", meaning: "사과", example: "I eat an apple every day.", level: "초급"},
+            {word: "beautiful", meaning: "아름다운", example: "She is very beautiful.", level: "초급"},
+            {word: "challenge", meaning: "도전", example: "This is a big challenge for me.", level: "중급"},
+            {word: "determine", meaning: "결정하다", example: "We need to determine the best solution.", level: "중급"},
+            {word: "extraordinary", meaning: "특별한", example: "It was an extraordinary experience.", level: "고급"},
+        ];
+
+        if (userWords.length === 0) {
+            userWords = [...defaultWords];
+            localStorage.setItem('userWords', JSON.stringify(userWords));
+        }
+
+        window.onload = function() {
+            displayWords();
+            displayQAHistory();
+            updateStats();
+        };
+
+        Object.assign(window, {
+            addNewWord, displayWords, deleteWord, filterWords, startFlashcardMode, showCurrentCard, flipCard,
+            prevCard, nextCard, exitFlashcard, startQuizMode, askMathQuestion, displayQAHistory, showMathConcept, calculate,
+            updateStats, generateStory, correctGrammar, summarizeText, generateQuizProblem, showProof, explainWithAnalogy,
+            startEnglishDialog, getWrongProblemHelp, suggestWordGame
+        });
+
+        function persistWords() {
+            localStorage.setItem('userWords', JSON.stringify(userWords));
+        }
+
+        function persistMathQAs() {
+            localStorage.setItem('mathQAs', JSON.stringify(mathQAs));
+        }
+
+        async function callAI(endpoint, payload, outputElementId) {
+            const outputElement = document.getElementById(outputElementId);
+            if (outputElement) {
+                outputElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 생성 중...';
+            }
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'AI 응답을 가져오는 중 오류가 발생했습니다.');
+                }
+                if (outputElement) {
+                    outputElement.innerText = data.text || '';
+                }
+                return data.text;
+            } catch (error) {
+                console.error('AI 호출 오류:', error);
+                const message = error.message || 'AI 응답을 가져오는 중 오류가 발생했습니다. API 키와 할당량을 확인해주세요.';
+                if (outputElement) {
+                    outputElement.innerText = message;
+                }
+                alert(message);
+                return null;
+            }
+        }
+
+        function addNewWord() {
+            const word = document.getElementById('newWord').value.trim();
+            const meaning = document.getElementById('newMeaning').value.trim();
+            const example = document.getElementById('newExample').value.trim();
+            const level = document.getElementById('wordLevel').value;
+
+            if (!word || !meaning) {
+                alert('단어와 뜻을 모두 입력해주세요!');
+                return;
+            }
+
+            const newWord = { word, meaning, example, level, learned: false };
+            userWords.push(newWord);
+            persistWords();
+
+            document.getElementById('newWord').value = '';
+            document.getElementById('newMeaning').value = '';
+            document.getElementById('newExample').value = '';
+
+            displayWords();
+            updateStats();
+        }
+
+        function displayWords() {
+            const wordList = document.getElementById('wordList');
+            const filter = document.getElementById('levelFilter').value;
+            const filteredWords = (filter === '전체') ? userWords : userWords.filter(w => w.level === filter);
+
+            wordList.innerHTML = '';
+            filteredWords.forEach(word => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'p-3 border border-gray-200 rounded-lg hover:bg-gray-50';
+                const originalIndex = userWords.indexOf(word);
+                wordDiv.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="font-semibold text-gray-800">${word.word}</div>
+                            <div class="text-gray-600">${word.meaning}</div>
+                            ${word.example ? `<div class="text-sm text-gray-500 italic">"${word.example}"</div>` : ''}
+                            <div class="text-xs text-blue-600 mt-1">${word.level}</div>
+                        </div>
+                        <button onclick="deleteWord(${originalIndex})" class="text-red-500 hover:text-red-700 ml-2">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>`;
+                wordList.appendChild(wordDiv);
+            });
+        }
+
+        function deleteWord(index) {
+            if (confirm('이 단어를 삭제하시겠습니까?')) {
+                userWords.splice(index, 1);
+                persistWords();
+                displayWords();
+                updateStats();
+            }
+        }
+
+        function filterWords() { displayWords(); }
+
+        function startFlashcardMode() {
+            if (userWords.length === 0) {
+                alert('학습할 단어가 없습니다!');
+                return;
+            }
+            document.getElementById('flashcardMode').classList.remove('hidden');
+            currentCardIndex = 0;
+            showCurrentCard();
+        }
+
+        function showCurrentCard() {
+            const card = userWords[currentCardIndex];
+            document.getElementById('cardFront').textContent = card.word;
+            document.getElementById('cardBack').innerHTML = `
+                <div>${card.meaning}</div>
+                ${card.example ? `<div class="text-sm mt-2 italic">"${card.example}"</div>` : ''}`;
+            document.getElementById('cardProgress').textContent = `${currentCardIndex + 1} / ${userWords.length}`;
+            document.getElementById('cardFront').classList.remove('hidden');
+            document.getElementById('cardBack').classList.add('hidden');
+            isCardFlipped = false;
+        }
+
+        function flipCard() {
+            document.getElementById('cardFront').classList.toggle('hidden');
+            document.getElementById('cardBack').classList.toggle('hidden');
+            isCardFlipped = !isCardFlipped;
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + userWords.length) % userWords.length;
+            showCurrentCard();
+        }
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % userWords.length;
+            showCurrentCard();
+        }
+        function exitFlashcard() { document.getElementById('flashcardMode').classList.add('hidden'); }
+        function startQuizMode() { alert('퀴즈 모드는 추후 업데이트 예정입니다!'); }
+
+        async function askMathQuestion() {
+            const question = document.getElementById('mathQuestion').value.trim();
+            if (!question) {
+                alert('질문을 입력해주세요!');
+                return;
+            }
+
+            const askBtn = document.getElementById('askMathBtn');
+            const askIcon = document.getElementById('askMathIcon');
+            const askText = document.getElementById('askMathText');
+
+            askBtn.disabled = true;
+            askIcon.className = 'fas fa-spinner fa-spin mr-2';
+            askText.textContent = '답변 생성 중...';
+
+            const answer = await callAI('/api/math-question', { question }, 'qaHistory');
+
+            if (answer) {
+                const qa = { question, answer, timestamp: new Date().toLocaleString() };
+                mathQAs.unshift(qa);
+                persistMathQAs();
+                document.getElementById('mathQuestion').value = '';
+                displayQAHistory();
+                updateStats();
+            }
+
+            askBtn.disabled = false;
+            askIcon.className = 'fas fa-paper-plane mr-2';
+            askText.textContent = '질문하기';
+        }
+
+        function displayQAHistory() {
+            const qaHistory = document.getElementById('qaHistory');
+            qaHistory.innerHTML = '';
+            if (mathQAs.length === 0) {
+                qaHistory.innerHTML = '<div class="text-gray-500 text-center py-4">아직 질문이 없습니다.</div>';
+                return;
+            }
+            mathQAs.slice(0, 5).forEach(qa => {
+                const qaDiv = document.createElement('div');
+                qaDiv.className = 'p-3 border border-gray-200 rounded-lg';
+                qaDiv.innerHTML = `
+                    <div class="text-sm text-gray-500 mb-1">${qa.timestamp}</div>
+                    <div class="font-semibold text-blue-700 mb-2">Q: ${qa.question}</div>
+                    <div class="text-gray-700 text-sm" style="white-space: pre-wrap;">A: ${qa.answer}</div>`;
+                qaHistory.appendChild(qaDiv);
+            });
+        }
+
+        function showMathConcept(concept) {
+            const concepts = {
+                algebra: '대수학은 숫자와 문자를 사용해 수학적 관계를 표현하는 분야입니다. 방정식, 함수 등을 다룹니다.',
+                geometry: '기하학은 점, 선, 면, 도형의 성질과 관계를 연구하는 분야입니다.',
+                calculus: '미적분학은 함수의 변화율(미분)과 누적량(적분)을 다루는 분야입니다.',
+                statistics: '통계학은 데이터를 수집, 분석, 해석하는 분야입니다. 평균, 분산 등을 사용합니다.'
+            };
+            alert(concepts[concept]);
+        }
+
+        function calculate() {
+            const expression = document.getElementById('calculator').value.trim();
+            const resultDiv = document.getElementById('calcResult');
+            if (!expression) {
+                resultDiv.textContent = '계산식을 입력해주세요!';
+                return;
+            }
+            try {
+                const sanitized = expression.replace(/[^0-9+\-*/.() ]/g, '');
+                if (sanitized !== expression) {
+                    throw new Error('Invalid characters');
+                }
+                // eslint-disable-next-line no-new-func
+                const result = new Function(`return ${sanitized}`)();
+                resultDiv.textContent = `결과: ${result}`;
+            } catch (error) {
+                resultDiv.textContent = '올바른 계산식을 입력해주세요!';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalWords').textContent = userWords.length;
+            document.getElementById('learnedWords').textContent = userWords.filter(w => w.learned).length;
+            document.getElementById('totalQuestions').textContent = mathQAs.length;
+        }
+
+        function generateStory() {
+            if (userWords.length < 3) {
+                alert('스토리를 만들려면 단어가 3개 이상 필요합니다.');
+                return;
+            }
+            const randomWords = [...userWords].sort(() => 0.5 - Math.random()).slice(0, 5).map(w => w.word);
+            callAI('/api/story', { words: randomWords }, 'storyResult');
+        }
+
+        function correctGrammar() {
+            const text = document.getElementById('grammarText').value.trim();
+            if (!text) {
+                alert('교정할 문장을 입력해주세요.');
+                return;
+            }
+            callAI('/api/grammar', { text }, 'grammarResult');
+        }
+
+        function summarizeText() {
+            const text = document.getElementById('summaryText').value.trim();
+            if (!text) {
+                alert('요약할 텍스트를 입력해주세요.');
+                return;
+            }
+            callAI('/api/summary', { text }, 'summaryResult');
+        }
+
+        function generateQuizProblem() {
+            const topic = document.getElementById('quizTopic').value.trim();
+            const difficulty = document.getElementById('quizDifficulty').value;
+            if (!topic) {
+                alert('문제 생성 주제를 입력해주세요.');
+                return;
+            }
+            callAI('/api/quiz-problem', { topic, difficulty }, 'quizProblemResult');
+        }
+
+        function showProof() {
+            const formula = document.getElementById('proofFormula').value.trim();
+            if (!formula) {
+                alert('증명할 공식을 입력해주세요.');
+                return;
+            }
+            callAI('/api/proof', { formula }, 'proofResult');
+        }
+
+        function explainWithAnalogy() {
+            const concept = document.getElementById('analogyConcept').value.trim();
+            if (!concept) {
+                alert('설명할 개념을 입력해주세요.');
+                return;
+            }
+            callAI('/api/analogy', { concept }, 'analogyResult');
+        }
+
+        async function startEnglishDialog() {
+            const topic = document.getElementById('dialogTopic').value.trim();
+            if (!topic) {
+                alert('대화 주제를 입력해주세요.');
+                return;
+            }
+            const response = await callAI('/api/dialog', { topic }, 'dialogResult');
+            if (response) {
+                alert('대화가 시작되었습니다! 이제 AI의 답변을 보고, 후속 질문을 "AI 수학 선생님께 질문하기" 창에 입력하여 대화를 이어갈 수 있습니다.');
+            }
+        }
+
+        function getWrongProblemHelp() {
+            const problem = document.getElementById('wrongProblem').value.trim();
+            if (!problem) {
+                alert('틀린 문제와 풀이를 입력해주세요.');
+                return;
+            }
+            callAI('/api/wrong-problem', { problem }, 'wrongProblemResult');
+        }
+
+        function suggestWordGame() {
+            if (userWords.length < 5) {
+                alert('게임 아이디어를 얻으려면 단어가 5개 이상 필요합니다.');
+                return;
+            }
+            const words = userWords.map(w => w.word);
+            callAI('/api/word-game', { words }, 'wordGameSuggestion');
+        }
+    </script>
+</body>
+</html>
