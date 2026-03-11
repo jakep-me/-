@@ -1,0 +1,48 @@
+:root {
+  color-scheme: dark;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #02030b;
+}
+
+#game {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  cursor: crosshair;
+}
+
+#hud {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 10;
+  color: #eaf6ff;
+  padding: 14px 16px;
+  pointer-events: none;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 7px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+#skills {
+  font-size: 13px;
+  color: #9ad9ff;
+}
+
+#notice {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #a9f8e1;
+  max-width: min(90vw, 700px);
+}
