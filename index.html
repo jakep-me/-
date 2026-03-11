@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Silent Arena FPS</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="hud">
+      <div class="row">
+        <span>HP: <b id="hp">100</b></span>
+        <span>Shield: <b id="shield">40</b></span>
+        <span>Ammo: <b id="ammo">24</b></span>
+        <span>Score: <b id="score">0</b></span>
+        <span>Wave: <b id="wave">1</b></span>
+      </div>
+      <div class="row" id="skills">
+        <span>Q: Pulse</span>
+        <span>E: Dash</span>
+        <span>R: Time-Slow</span>
+      </div>
+      <div id="notice">마우스를 클릭해 조준을 잠그고 전투를 시작하세요.</div>
+    </div>
+    <canvas id="game" width="1280" height="720"></canvas>
+    <script src="game.js"></script>
+  </body>
+</html>
