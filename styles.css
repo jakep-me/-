@@ -1,0 +1,374 @@
+:root {
+  color-scheme: dark;
+  --bg: #060816;
+  --panel: rgba(11, 16, 38, 0.88);
+  --panel-line: rgba(115, 148, 255, 0.35);
+  --accent: #6ce7ff;
+  --accent-strong: #5f8cff;
+  --warning: #ff6b86;
+  --success: #84ffb3;
+  --text: #f5f7ff;
+  --muted: #a8b2d8;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(95, 140, 255, 0.25), transparent 30%),
+    linear-gradient(180deg, #091127 0%, #04050b 100%);
+  color: var(--text);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  cursor: pointer;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(280px, 0.8fr);
+  gap: 18px;
+  padding: 18px;
+  min-height: 100vh;
+}
+
+.hud,
+.arena-panel,
+.info-panel {
+  border: 1px solid var(--panel-line);
+  border-radius: 24px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.hud {
+  grid-column: 1 / -1;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+}
+
+.hud h1,
+.info-panel h2 {
+  margin: 0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(72px, 1fr));
+  gap: 10px;
+}
+
+.stat-card {
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  min-width: 86px;
+}
+
+.stat-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+}
+
+.stat-card strong {
+  font-size: 1.2rem;
+}
+
+.arena-panel {
+  position: relative;
+  padding: 16px;
+  overflow: hidden;
+}
+
+#gameCanvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #15244e 0%, #0f142d 48%, #09141a 100%);
+}
+
+.crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.78);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  box-shadow: 0 0 18px rgba(108, 231, 255, 0.35);
+}
+
+.crosshair::before,
+.crosshair::after {
+  content: "";
+  position: absolute;
+  inset: 50%;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.crosshair::before {
+  width: 2px;
+  height: 36px;
+  transform: translate(-50%, -50%);
+}
+
+.crosshair::after {
+  width: 36px;
+  height: 2px;
+  transform: translate(-50%, -50%);
+}
+
+.top-actions,
+.ability-bar,
+.touch-ui {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+}
+
+.top-actions {
+  top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.ghost-button,
+.skill-button,
+.action-button {
+  border-radius: 999px;
+  padding: 12px 18px;
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ghost-button {
+  background: rgba(7, 10, 20, 0.5);
+}
+
+.ability-bar {
+  bottom: 18px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.skill-button,
+.action-button,
+.touch-pad {
+  pointer-events: auto;
+}
+
+.skill-button {
+  min-width: 92px;
+  background: rgba(7, 10, 20, 0.6);
+}
+
+.skill-dash {
+  box-shadow: inset 0 0 0 1px rgba(108, 231, 255, 0.4);
+}
+
+.skill-smoke {
+  box-shadow: inset 0 0 0 1px rgba(95, 140, 255, 0.55);
+}
+
+.skill-reload {
+  box-shadow: inset 0 0 0 1px rgba(132, 255, 179, 0.45);
+}
+
+.touch-ui {
+  bottom: 18px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.joystick-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.right-zone {
+  align-items: flex-end;
+}
+
+.touch-pad {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.touch-ring {
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+}
+
+.ring-large {
+  inset: 18px;
+}
+
+.thumb-stick {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 68px;
+  height: 68px;
+  margin: -34px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.18));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.thumb-stick.accent {
+  background: radial-gradient(circle at 30% 30%, rgba(108,231,255,0.95), rgba(95,140,255,0.22));
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-button.primary {
+  min-width: 112px;
+  min-height: 64px;
+  background: linear-gradient(135deg, rgba(255, 107, 134, 0.92), rgba(255, 154, 98, 0.92));
+  font-weight: 700;
+}
+
+.touch-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.info-panel {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info-panel article {
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.info-panel ul {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.info-panel p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 1120px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .info-panel {
+    order: 3;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .hud {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .arena-panel {
+    padding: 10px;
+  }
+
+  .top-actions,
+  .ability-bar,
+  .touch-ui {
+    left: 10px;
+    right: 10px;
+  }
+
+  .top-actions {
+    top: 10px;
+  }
+
+  .touch-pad {
+    width: 132px;
+    height: 132px;
+  }
+
+  .thumb-stick {
+    width: 52px;
+    height: 52px;
+    margin: -26px;
+  }
+
+  .ability-bar {
+    bottom: 126px;
+    justify-content: space-between;
+  }
+
+  .skill-button {
+    flex: 1;
+    min-width: 0;
+    padding-inline: 10px;
+  }
+
+  .action-button.primary {
+    min-width: 92px;
+    min-height: 56px;
+  }
+}

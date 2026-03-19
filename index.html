@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Neon Strike Mobile</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hud">
+        <div>
+          <p class="eyebrow">Mobile Tactical FPS Prototype</p>
+          <h1>Neon Strike Mobile</h1>
+        </div>
+        <div class="stats">
+          <div class="stat-card">
+            <span>HP</span>
+            <strong id="hpValue">100</strong>
+          </div>
+          <div class="stat-card">
+            <span>Kills</span>
+            <strong id="killValue">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>Wave</span>
+            <strong id="waveValue">1</strong>
+          </div>
+          <div class="stat-card">
+            <span>Ammo</span>
+            <strong id="ammoValue">18</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="arena-panel">
+        <canvas id="gameCanvas" width="1280" height="720" aria-label="게임 화면"></canvas>
+        <div class="crosshair" aria-hidden="true"></div>
+
+        <div class="top-actions">
+          <button id="pauseButton" class="ghost-button">일시정지</button>
+          <button id="restartButton" class="ghost-button">재시작</button>
+        </div>
+
+        <div class="ability-bar">
+          <button id="dashButton" class="skill-button skill-dash">대시</button>
+          <button id="smokeButton" class="skill-button skill-smoke">스모크</button>
+          <button id="reloadButton" class="skill-button skill-reload">재장전</button>
+        </div>
+
+        <div class="touch-ui">
+          <div class="joystick-zone">
+            <div id="movePad" class="touch-pad left-pad">
+              <div class="touch-ring"></div>
+              <div id="moveStick" class="thumb-stick"></div>
+            </div>
+            <p class="touch-label">이동</p>
+          </div>
+          <div class="joystick-zone right-zone">
+            <div id="aimPad" class="touch-pad right-pad">
+              <div class="touch-ring ring-large"></div>
+              <div id="aimStick" class="thumb-stick accent"></div>
+            </div>
+            <div class="action-buttons">
+              <button id="shootButton" class="action-button primary">사격</button>
+            </div>
+            <p class="touch-label align-right">시점 조작</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="info-panel">
+        <article>
+          <h2>플레이 방법</h2>
+          <ul>
+            <li>왼쪽 조이스틱으로 이동하고 오른쪽 패드로 조준하세요.</li>
+            <li>사격 버튼으로 적을 처치하고, 재장전으로 탄을 채우세요.</li>
+            <li>대시는 빠른 회피, 스모크는 잠시 적 시야를 흐리게 합니다.</li>
+            <li>웨이브가 올라갈수록 적 수와 속도가 증가합니다.</li>
+          </ul>
+        </article>
+        <article>
+          <h2>컨셉 포인트</h2>
+          <ul>
+            <li>모바일 UI 중심의 터치 조작</li>
+            <li>라운드형 전술 FPS 감성의 능력 버튼</li>
+            <li>별도 설치 없이 실행 가능한 단일 웹 프로젝트</li>
+          </ul>
+        </article>
+        <article>
+          <h2 id="statusTitle">작전 개시</h2>
+          <p id="statusMessage">적을 스캔 중입니다. 전장을 장악하세요.</p>
+        </article>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
